@@ -1,0 +1,4 @@
+Average Latency: 20 ms
+Peak Latency: 35 ms
+Packet Loss: 0.2%
+ 

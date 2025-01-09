@@ -1,0 +1,42 @@
+me: Configure Firewall, DNS, and DHCP
+    hosts: all
+        become: yes
+
+            tasks:
+                  - name: Install necessary packages
+                          apt:
+                                    name:
+                                                - ufw
+                                                            - bind9
+                                                                        - isc-dhcp-server
+                                                                                  state: present
+
+                                                                                        - name: Enable firewall and allow necessary ports
+                                                                                                ufw:
+                                                                                                          rule: allow
+                                                                                                                    port: "22,53,67,80,443"
+                                                                                                                              proto: tcp
+
+                                                                                                                                    - name: Configure DNS
+                                                                                                                                            template:
+                                                                                                                                                      src: ../configs/dns_config.conf
+                                                                                                                                                                dest: /etc/bind/named.conf.options
+                                                                                                                                                                        notify: restart bind9
+
+                                                                                                                                                                              - name: Configure DHCP
+                                                                                                                                                                                      template:
+                                                                                                                                                                                                src: ../configs/dhcp_config.conf
+                                                                                                                                                                                                          dest: /etc/dhcp/dhcpd.conf
+                                                                                                                                                                                                                  notify: restart isc-dhcp-server
+
+                                                                                                                                                                                                                      handlers:
+                                                                                                                                                                                                                            - name: restart bind9
+                                                                                                                                                                                                                                    service:
+                                                                                                                                                                                                                                              name: bind9
+                                                                                                                                                                                                                                                        state: restarted
+
+                                                                                                                                                                                                                                                              - name: restart isc-dhcp-server
+                                                                                                                                                                                                                                                                      service:
+                                                                                                                                                                                                                                                                                name: isc-dhcp-server
+                                                                                                                                                                                                                                                                                          state: restarted
+
